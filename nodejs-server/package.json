@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "tsc &&node dist/index.js",
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
+    "dev": "tsc && ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,10 +13,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "openai": "^4.24.1"
+    "openai": "^4.24.1",
+    "langchain": "0.0.200",
+    "@langchain/openai": "^0.0.10",
+    "chromadb": "^1.7.1",
+    "@langchain/community": "^0.0.15",
+    "web-streams-polyfill": "^3.2.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

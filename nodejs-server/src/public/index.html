@@ -3,20 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with OpenAI</title>
+    <title>Shopping Assistant</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        #chat-section {
+            flex: 2;
+        }
+        #products-section {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         #chat-container {
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             padding: 20px;
-            height: 400px;
+            height: 450px;
             overflow-y: auto;
             margin-bottom: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         #message-form {
             display: flex;
@@ -24,43 +50,171 @@
         }
         #message-input {
             flex-grow: 1;
-            padding: 10px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
         }
         button {
-            padding: 10px 20px;
-            background-color: #007bff;
+            padding: 12px 20px;
+            background-color: #3498db;
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.2s;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #2980b9;
         }
         .message {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+            line-height: 1.5;
         }
         .user-message {
-            background-color: #e9ecef;
+            background-color: #e1f5fe;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
         }
         .assistant-message {
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .product-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .product-price {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .product-description {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        .product-category {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        .product-tag {
+            display: inline-block;
+            background-color: #f1f1f1;
+            color: #555;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 3px;
+            margin-bottom: 3px;
+        }
+        .tags-container {
+            margin-top: 8px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .welcome-message {
+            text-align: center;
+            padding: 20px;
+            background-color: #e1f5fe;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .markdown strong, .markdown b {
+            font-weight: bold;
+        }
+        .markdown em, .markdown i {
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <h1>Chat with OpenAI</h1>
-    <div id="chat-container"></div>
-    <form id="message-form">
-        <input type="text" id="message-input" placeholder="Type your message..." required>
-        <button type="submit">Send</button>
-    </form>
+    <header>
+        <h1>Shopping Assistant</h1>
+        <p>Ask about products and get personalized recommendations</p>
+    </header>
+
+    <div class="welcome-message">
+        <h2>Welcome to our Shopping Assistant!</h2>
+        <p>Ask me about products you're interested in, and I'll provide personalized recommendations.</p>
+        <p>Try questions like:</p>
+        <ul style="text-align: left; display: inline-block;">
+            <li>"I need a good pair of headphones for music"</li>
+            <li>"What's a good laptop for a college student?"</li>
+            <li>"Can you recommend a fitness tracker?"</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <section id="chat-section">
+            <div id="chat-container"></div>
+            <form id="message-form">
+                <input type="text" id="message-input" placeholder="Ask about products you're interested in..." required>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+        
+        <section id="products-section">
+            <h2>Featured Products</h2>
+            <div id="products-container"></div>
+        </section>
+    </div>
 
     <script>
         const chatContainer = document.getElementById('chat-container');
         const messageForm = document.getElementById('message-form');
         const messageInput = document.getElementById('message-input');
+        const productsContainer = document.getElementById('products-container');
+        
+        // Chat history to maintain context
+        let chatHistory = [];
+        
+        // Load featured products on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/products');
+                if (response.ok) {
+                    const products = await response.json();
+                    displayProducts(products);
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        });
 
         messageForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -70,25 +224,50 @@
             // Add user message to chat
             appendMessage('user', message);
             messageInput.value = '';
+            
+            // Show loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message assistant-message';
+            loadingDiv.innerHTML = 'Thinking<span class="loading"></span>';
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const response = await fetch('/chat', {
+                // Search for relevant products
+                const searchResponse = await fetch(`/api/products/search?q=${encodeURIComponent(message)}`);
+                if (searchResponse.ok) {
+                    const products = await searchResponse.json();
+                    displayProducts(products);
+                }
+                
+                // Add message to history
+                chatHistory.push({ role: 'user', content: message });
+                
+                // Get chat response
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({ 
+                        message,
+                        history: chatHistory
+                    }),
                 });
 
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
 
+                // Remove loading indicator
+                chatContainer.removeChild(loadingDiv);
+
                 // Create message container for assistant's response
                 const assistantMessage = document.createElement('div');
-                assistantMessage.className = 'message assistant-message';
+                assistantMessage.className = 'message assistant-message markdown';
                 chatContainer.appendChild(assistantMessage);
 
+                let fullResponse = '';
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
 
@@ -106,15 +285,30 @@
 
                             try {
                                 const { content } = JSON.parse(data);
-                                assistantMessage.textContent += content;
+                                fullResponse += content;
+                                // Simple markdown rendering for bold text
+                                const formattedContent = fullResponse
+                                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                    .replace(/\n/g, '<br>');
+                                assistantMessage.innerHTML = formattedContent;
+                                chatContainer.scrollTop = chatContainer.scrollHeight;
                             } catch (e) {
                                 console.error('Error parsing SSE data:', e);
                             }
                         }
                     }
                 }
+                
+                // Add assistant message to history
+                chatHistory.push({ role: 'assistant', content: fullResponse });
+                
+                // Limit history length to prevent context overflow
+                if (chatHistory.length > 10) {
+                    chatHistory = chatHistory.slice(chatHistory.length - 10);
+                }
             } catch (error) {
                 console.error('Error:', error);
+                chatContainer.removeChild(loadingDiv);
                 appendMessage('assistant', 'Sorry, an error occurred while processing your request.');
             }
         });
@@ -122,9 +316,59 @@
         function appendMessage(role, content) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}-message`;
-            messageDiv.textContent = content;
+            
+            // Simple markdown rendering for bold text
+            const formattedContent = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+                
+            messageDiv.innerHTML = formattedContent;
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function displayProducts(products) {
+            productsContainer.innerHTML = '';
+            
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                const productName = document.createElement('div');
+                productName.className = 'product-name';
+                productName.textContent = product.name;
+                
+                const productPrice = document.createElement('div');
+                productPrice.className = 'product-price';
+                productPrice.textContent = `$${product.price.toFixed(2)}`;
+                
+                const productCategory = document.createElement('div');
+                productCategory.className = 'product-category';
+                productCategory.textContent = product.category;
+                
+                const tagsContainer = document.createElement('div');
+                tagsContainer.className = 'tags-container';
+                
+                product.tags.forEach(tag => {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.className = 'product-tag';
+                    tagSpan.textContent = tag;
+                    tagsContainer.appendChild(tagSpan);
+                });
+                
+                productCard.appendChild(productName);
+                productCard.appendChild(productPrice);
+                productCard.appendChild(productCategory);
+                productCard.appendChild(tagsContainer);
+                
+                // Add click event to insert product question into chat
+                productCard.addEventListener('click', () => {
+                    messageInput.value = `Tell me more about the ${product.name}`;
+                    messageInput.focus();
+                });
+                
+                productsContainer.appendChild(productCard);
+            });
         }
     </script>
 </body>
